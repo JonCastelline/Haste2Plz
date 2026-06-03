@@ -33,7 +33,7 @@ local packets = require('packets')
 local resources = require('resources')
 
 _addon.name = 'Haste2Plz'
-_addon.author = 'Jon Castelline'
+_addon.author = 'Frodobald'
 _addon.version = '1.0.0'
 _addon.commands = {'haste2plz', 'h2p'}
 
