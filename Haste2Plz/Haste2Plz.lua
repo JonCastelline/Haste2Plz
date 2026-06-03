@@ -100,6 +100,26 @@ local function cancel_buff(buff_id)
     return true
 end
 
+local function can_cancel_haste()
+    if not settings.enabled then
+        return false, 'disabled'
+    end
+
+    if not koru_moru_in_party() then
+        return false, 'Koru-Moru is not in party'
+    end
+
+    if not player_has_buff(HASTE_I_ID) then
+        return false, 'you do not have Haste'
+    end
+
+    if not last_haste_source or last_haste_source.kind ~= 'haste_i' then
+        return false, 'last haste source is not plain Haste'
+    end
+
+    return true, nil
+end
+
 local function schedule_haste_check(delay)
     if pending_haste_check then
         return
@@ -160,25 +180,20 @@ local function note_haste_action(packet)
     end
 end
 
-function evaluate()
-    if not settings.enabled then
-        return false
-    end
-
-    if not koru_moru_in_party() then
-        return false
-    end
-
-    if not player_has_buff(HASTE_I_ID) then
-        return false
-    end
-
-    if not last_haste_source or last_haste_source.kind ~= 'haste_i' then
+function evaluate(announce)
+    local ok, reason = can_cancel_haste()
+    if not ok then
+        if announce then
+            windower.add_to_chat(200, 'Haste2Plz: No action - ' .. reason .. '.')
+        end
         return false
     end
 
     cancel_buff(HASTE_I_ID)
     last_haste_source = nil
+    if announce then
+        windower.add_to_chat(200, 'Haste2Plz: Cancelled Haste so Koru-Moru can land Haste II.')
+    end
     return true
 end
 
@@ -237,7 +252,7 @@ windower.register_event('addon command', function(command)
         settings:save()
         windower.add_to_chat(200, 'Haste2Plz: Disabled.')
     elseif command == 'check' then
-        evaluate()
+        evaluate(true)
     elseif command == 'status' then
         local koru = koru_moru_in_party() and 'yes' or 'no'
         local haste = player_has_buff(HASTE_I_ID) and 'yes' or 'no'

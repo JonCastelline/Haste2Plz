@@ -12,7 +12,7 @@ Haste2Plz is a small Windower addon for FFXI that prefers Koru-Moru's `Haste II`
 
 - `//h2p on`: Enable the addon.
 - `//h2p off`: Disable the addon.
-- `//h2p check`: Run an immediate evaluation.
+- `//h2p check`: Run an immediate evaluation and report why it did or did not act.
 - `//h2p status`: Show current state.
 
 ## Notes
